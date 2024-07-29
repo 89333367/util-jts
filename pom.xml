@@ -79,13 +79,6 @@
                                     <artifact>*:*</artifact>
                                     <excludes>
                                         <exclude>META-INF/**</exclude>
-                                        <exclude>LICENSE</exclude>
-                                        <exclude>NOTICE</exclude>
-                                        <exclude>darwin/**</exclude>
-                                        <exclude>linux/**</exclude>
-                                        <exclude>org/xerial/**</exclude>
-                                        <exclude>win32/**</exclude>
-                                        <exclude>kafka/kafka-version.properties</exclude>
                                     </excludes>
                                 </filter>
                             </filters>
