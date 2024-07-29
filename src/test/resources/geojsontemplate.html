@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GeoJSON tutorial - Leaflet</title>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <script src="https://unpkg.com/terraformer@1.0.7/terraformer.js"></script>
+    <script src="https://unpkg.com/terraformer-wkt-parser@1.1.2/terraformer-wkt-parser.js"></script>
+    <link crossorigin="" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
+          integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+          rel="stylesheet"/>
+    <script crossorigin=""
+            integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
+            src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"></script>
+</head>
+<body>
+<div id='map'></div>
+<script>
+    function addBounds(bounds, arr) {
+        if (typeof arr[0] === 'number') {
+            var lonLat = arr;
+            bounds.push([lonLat[1], lonLat[0]]);
+        } else {
+            for (var i = 0; i < arr.length; i++) {
+                addBounds(bounds, arr[i]);
+            }
+        }
+    }
+
+    document.getElementById("map").style.width = document.documentElement.clientWidth - 20 + 'px';
+    document.getElementById("map").style.height = document.documentElement.clientHeight - 20 + 'px';
+    var wkts = [];
+    var geojsons = [];
+    for (var i = 0, len = wkts.length; i < len; i++) {
+        var geojson = Terraformer.WKT.parse(wkts[i]);
+        geojsons.push(geojson);
+    }
+    console.info(geojsons);
+    var map = L.map('map');
+    L.geoJSON(geojsons).addTo(map);
+    var bounds = [];
+    for (var i = 0; i < geojsons.length; i++) {
+        var geo = geojsons[i];
+        addBounds(bounds, geo.coordinates);
+    }
+    map.fitBounds(bounds);
+</script>
+</body>
+</html>
