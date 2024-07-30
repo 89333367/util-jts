@@ -34,7 +34,7 @@
 ```java
 public class TestJtsUtil {
     Log log = LogFactory.get();
-    JtsUtil jtsUtil = JtsUtil.INSTANCE.build();
+    JtsUtil jtsUtil = JtsUtil.builder().build();
 
     @Test
     public void 测试多边形面积() throws ParseException {
@@ -88,7 +88,7 @@ public class TestCoordTransformUtil {
 
     @Test
     void t001() {
-        CoordTransformUtil coordTransformUtil = CoordTransformUtil.INSTANCE.build();
+        CoordTransformUtil coordTransformUtil = CoordTransformUtil.builder().build();
         log.debug("{}", coordTransformUtil.outOfChina(39.178762, 118.546783));
     }
 }

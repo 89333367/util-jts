@@ -65,10 +65,10 @@
                     <minimizeJar>true</minimizeJar>
                     <!-- 重命名包名解决冲突 -->
                     <relocations>
-                        <relocation>
+                        <!--<relocation>
                             <pattern>org.apache.kafka</pattern>
                             <shadedPattern>relocation.org.apache.kafka</shadedPattern>
-                        </relocation>
+                        </relocation>-->
                     </relocations>
                 </configuration>
                 <executions>

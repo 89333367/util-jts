@@ -1,5 +1,8 @@
 package sunyu.util;
 
+import cn.hutool.log.Log;
+import cn.hutool.log.LogFactory;
+
 import java.io.Closeable;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -22,10 +25,16 @@ import java.util.List;
  */
 public enum CoordTransformUtil implements Serializable, Closeable {
     INSTANCE;
+    private Log log = LogFactory.get();
 
-    private double AXIS = 6378245.0;
-    private double OFFSET = 0.00669342162296594323; // (a^2 - b^2) / a^2
-    private double X_PI = Math.PI * 3000.0 / 180.0;
+    /**
+     * 获得工具类工厂
+     *
+     * @return
+     */
+    public static CoordTransformUtil builder() {
+        return INSTANCE;
+    }
 
     /**
      * 构建工具类
@@ -35,6 +44,17 @@ public enum CoordTransformUtil implements Serializable, Closeable {
     public CoordTransformUtil build() {
         return INSTANCE;
     }
+
+    /**
+     * 回收资源
+     */
+    @Override
+    public void close() {
+    }
+
+    private double AXIS = 6378245.0;
+    private double OFFSET = 0.00669342162296594323; // (a^2 - b^2) / a^2
+    private double X_PI = Math.PI * 3000.0 / 180.0;
 
     private double[] delta(double lat, double lon) {
         double[] latlng = new double[2];
@@ -391,7 +411,4 @@ public enum CoordTransformUtil implements Serializable, Closeable {
         return result;
     }
 
-    @Override
-    public void close() {
-    }
 }

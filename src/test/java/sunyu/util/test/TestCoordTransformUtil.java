@@ -10,7 +10,7 @@ public class TestCoordTransformUtil {
 
     @Test
     void t001() {
-        CoordTransformUtil coordTransformUtil = CoordTransformUtil.INSTANCE.build();
+        CoordTransformUtil coordTransformUtil = CoordTransformUtil.builder().build();
         log.debug("{}", coordTransformUtil.outOfChina(39.178762, 118.546783));
     }
 }

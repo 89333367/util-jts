@@ -13,7 +13,7 @@ import sunyu.util.JtsUtil;
 
 public class TestJtsUtil {
     Log log = LogFactory.get();
-    JtsUtil jtsUtil = JtsUtil.INSTANCE.build();
+    JtsUtil jtsUtil = JtsUtil.builder().build();
 
     @Test
     public void 测试多边形面积() throws ParseException {

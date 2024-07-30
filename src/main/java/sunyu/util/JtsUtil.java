@@ -13,7 +13,6 @@ import sunyu.util.concaveHull.ConcaveHullJTS;
 import sunyu.util.concaveHull.TriCheckerAlpha;
 
 import java.io.Closeable;
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -53,9 +52,15 @@ import java.util.concurrent.TimeoutException;
 public enum JtsUtil implements Serializable, Closeable {
     INSTANCE;
     private Log log = LogFactory.get();
-    private static final String POLYGON = "Polygon";
-    private GeometryFactory geometryFactory = new GeometryFactory();
-    private WKTReader wktReader = new WKTReader(geometryFactory);
+
+    /**
+     * 获得工具类工厂
+     *
+     * @return
+     */
+    public static JtsUtil builder() {
+        return INSTANCE;
+    }
 
     /**
      * 构建工具类
@@ -65,6 +70,17 @@ public enum JtsUtil implements Serializable, Closeable {
     public JtsUtil build() {
         return INSTANCE;
     }
+
+    /**
+     * 释放资源
+     */
+    @Override
+    public void close() {
+    }
+
+    private static final String POLYGON = "Polygon";
+    private GeometryFactory geometryFactory = new GeometryFactory();
+    private WKTReader wktReader = new WKTReader(geometryFactory);
 
     /**
      * 由WGS84坐标转换高斯投影坐标
@@ -520,12 +536,5 @@ public enum JtsUtil implements Serializable, Closeable {
         return Math.floor(d + 0.5);
     }
 
-    /**
-     * 释放资源
-     *
-     * @throws IOException
-     */
-    @Override
-    public void close() {
-    }
+
 }
