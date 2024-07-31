@@ -1,14 +1,5 @@
 # JTS工具类
 
-## 依赖
-```xml
-<dependency>
-    <groupId>sunyu.util</groupId>
-    <artifactId>util-jts</artifactId>
-    <version>v1.0</version>
-</dependency>
-```
-
 ## 功能特点
 
 1. 拥有电子围栏判断功能
@@ -28,6 +19,20 @@
 - 包含(Contains)：几何形状B的线都在几何形状A内部（区别于内含）
 - 重叠(Overlaps)：几何形状共享一部分但不是所有的公共点，而且相交处有他们自己相同的区域。
 
+## 环境
+
+* jdk8 x64 及以上版本
+
+## 依赖
+
+```xml
+
+<dependency>
+    <groupId>sunyu.util</groupId>
+    <artifactId>util-jts</artifactId>
+    <version>v1.0</version>
+</dependency>
+```
 
 ### 使用示例，更多调用方法请看JtsUtil.java源码
 
