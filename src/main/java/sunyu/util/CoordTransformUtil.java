@@ -23,34 +23,10 @@ import java.util.List;
  * <p>
  * 搜狗坐标系、图吧坐标系等，估计也是在GCJ02基础上加密而成的。
  */
-public enum CoordTransformUtil implements Serializable, Closeable {
-    INSTANCE;
+public class CoordTransformUtil implements Serializable, Closeable {
     private Log log = LogFactory.get();
+    private static final CoordTransformUtil INSTANCE = new CoordTransformUtil();
 
-    /**
-     * 获得工具类工厂
-     *
-     * @return
-     */
-    public static CoordTransformUtil builder() {
-        return INSTANCE;
-    }
-
-    /**
-     * 构建工具类
-     *
-     * @return
-     */
-    public CoordTransformUtil build() {
-        return INSTANCE;
-    }
-
-    /**
-     * 回收资源
-     */
-    @Override
-    public void close() {
-    }
 
     private double AXIS = 6378245.0;
     private double OFFSET = 0.00669342162296594323; // (a^2 - b^2) / a^2
@@ -410,5 +386,42 @@ public enum CoordTransformUtil implements Serializable, Closeable {
         }
         return result;
     }
+
+
+    /**
+     * 私有构造，避免外部初始化
+     */
+    private CoordTransformUtil() {
+    }
+
+    /**
+     * 获得工具类工厂
+     *
+     * @return
+     */
+    public static CoordTransformUtil builder() {
+        return INSTANCE;
+    }
+
+    /**
+     * 构建工具类
+     *
+     * @return
+     */
+    public CoordTransformUtil build() {
+        log.info("构建工具类开始");
+        log.info("构建工具类完毕");
+        return INSTANCE;
+    }
+
+    /**
+     * 回收资源
+     */
+    @Override
+    public void close() {
+        log.info("销毁工具类开始");
+        log.info("销毁工具类结束");
+    }
+
 
 }

@@ -49,36 +49,12 @@ import java.util.concurrent.TimeoutException;
  * <p>
  * MULTIPOLYGON EMPTY
  */
-public enum JtsUtil implements Serializable, Closeable {
-    INSTANCE;
+public class JtsUtil implements Serializable, Closeable {
     private Log log = LogFactory.get();
+    private static final JtsUtil INSTANCE = new JtsUtil();
 
-    /**
-     * 获得工具类工厂
-     *
-     * @return
-     */
-    public static JtsUtil builder() {
-        return INSTANCE;
-    }
 
-    /**
-     * 构建工具类
-     *
-     * @return
-     */
-    public JtsUtil build() {
-        return INSTANCE;
-    }
-
-    /**
-     * 释放资源
-     */
-    @Override
-    public void close() {
-    }
-
-    private static final String POLYGON = "Polygon";
+    private String POLYGON = "Polygon";
     private GeometryFactory geometryFactory = new GeometryFactory();
     private WKTReader wktReader = new WKTReader(geometryFactory);
 
@@ -537,4 +513,38 @@ public enum JtsUtil implements Serializable, Closeable {
     }
 
 
+    /**
+     * 私有构造，避免外部初始化
+     */
+    private JtsUtil() {
+    }
+
+    /**
+     * 获得工具类工厂
+     *
+     * @return
+     */
+    public static JtsUtil builder() {
+        return INSTANCE;
+    }
+
+    /**
+     * 构建工具类
+     *
+     * @return
+     */
+    public JtsUtil build() {
+        log.info("构建工具类开始");
+        log.info("构建工具类完毕");
+        return INSTANCE;
+    }
+
+    /**
+     * 释放资源
+     */
+    @Override
+    public void close() {
+        log.info("销毁工具类开始");
+        log.info("销毁工具类结束");
+    }
 }
