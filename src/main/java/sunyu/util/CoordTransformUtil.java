@@ -24,13 +24,13 @@ import java.util.List;
  * 搜狗坐标系、图吧坐标系等，估计也是在GCJ02基础上加密而成的。
  */
 public class CoordTransformUtil implements Serializable, Closeable {
-    private Log log = LogFactory.get();
+    private final Log log = LogFactory.get();
     private static final CoordTransformUtil INSTANCE = new CoordTransformUtil();
 
 
-    private double AXIS = 6378245.0;
-    private double OFFSET = 0.00669342162296594323; // (a^2 - b^2) / a^2
-    private double X_PI = Math.PI * 3000.0 / 180.0;
+    private final double AXIS = 6378245.0;
+    private final double OFFSET = 0.00669342162296594323; // (a^2 - b^2) / a^2
+    private final double X_PI = Math.PI * 3000.0 / 180.0;
 
     private double[] delta(double lat, double lon) {
         double[] latlng = new double[2];

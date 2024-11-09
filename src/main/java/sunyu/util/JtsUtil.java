@@ -3,7 +3,6 @@ package sunyu.util;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
-import cn.hutool.log.StaticLog;
 import org.locationtech.jts.algorithm.Area;
 import org.locationtech.jts.geom.*;
 import org.locationtech.jts.io.ParseException;
@@ -50,13 +49,13 @@ import java.util.concurrent.TimeoutException;
  * MULTIPOLYGON EMPTY
  */
 public class JtsUtil implements Serializable, Closeable {
-    private Log log = LogFactory.get();
+    private final Log log = LogFactory.get();
     private static final JtsUtil INSTANCE = new JtsUtil();
 
 
-    private String POLYGON = "Polygon";
-    private GeometryFactory geometryFactory = new GeometryFactory();
-    private WKTReader wktReader = new WKTReader(geometryFactory);
+    private final String POLYGON = "Polygon";
+    private final GeometryFactory geometryFactory = new GeometryFactory();
+    private final WKTReader wktReader = new WKTReader(geometryFactory);
 
     /**
      * 由WGS84坐标转换高斯投影坐标
@@ -222,7 +221,7 @@ public class JtsUtil implements Serializable, Closeable {
             sb.append('[').append(split1[1]).append(',').append(split1[0]).append("],");
         }
         String substring = sb.substring(0, sb.lastIndexOf(","));
-        if (substring.length() == 0) {
+        if (substring.isEmpty()) {
             return null;
         }
         return '[' + substring + ']';
@@ -240,7 +239,7 @@ public class JtsUtil implements Serializable, Closeable {
                 sb.append(split1[1]).append(" ").append(split1[0]).append(",");
             }
             String r = sb.substring(0, sb.lastIndexOf(","));
-            if (r.length() == 0) {
+            if (r.isEmpty()) {
                 return null;
             }
             return "POLYGON ((" + r + "))";
@@ -323,11 +322,11 @@ public class JtsUtil implements Serializable, Closeable {
                     if (POLYGON.equals(hull.getGeometryType())) {
                         result[1] = wktToGoogleStr((Polygon) hull);
                     } else {
-                        StaticLog.error("凹壳转换多边形异常");
+                        log.error("凹壳转换多边形异常");
                     }
                 }
             } else { //数据异常过滤完之后没有多边形
-                StaticLog.error("多边形过滤数据异常数据信息有误");
+                log.error("多边形过滤数据异常数据信息有误");
             }
         }
         return result;
@@ -361,7 +360,7 @@ public class JtsUtil implements Serializable, Closeable {
                 if (POLYGON.equals(hull.getGeometryType())) {
                     result = (Polygon) hull;
                 } else {
-                    StaticLog.error("凹壳转换多边形异常");
+                    log.error("凹壳转换多边形异常");
                 }
             }
         }
