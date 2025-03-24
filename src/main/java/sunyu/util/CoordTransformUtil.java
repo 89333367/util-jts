@@ -3,8 +3,6 @@ package sunyu.util;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
 
-import java.io.Closeable;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,14 +21,42 @@ import java.util.List;
  * <p>
  * 搜狗坐标系、图吧坐标系等，估计也是在GCJ02基础上加密而成的。
  */
-public class CoordTransformUtil implements Serializable, Closeable {
+public class CoordTransformUtil implements AutoCloseable {
     private final Log log = LogFactory.get();
-    private static final CoordTransformUtil INSTANCE = new CoordTransformUtil();
+    private final Config config;
 
+    public static Builder builder() {
+        return new Builder();
+    }
 
-    private final double AXIS = 6378245.0;
-    private final double OFFSET = 0.00669342162296594323; // (a^2 - b^2) / a^2
-    private final double X_PI = Math.PI * 3000.0 / 180.0;
+    private CoordTransformUtil(Config config) {
+        log.info("[构建CoordTransformUtil] 开始");
+        log.info("[构建CoordTransformUtil] 结束");
+        this.config = config;
+    }
+
+    private static class Config {
+        private final double AXIS = 6378245.0;
+        private final double OFFSET = 0.00669342162296594323; // (a^2 - b^2) / a^2
+        private final double X_PI = Math.PI * 3000.0 / 180.0;
+    }
+
+    public static class Builder {
+        private final Config config = new Config();
+
+        public CoordTransformUtil build() {
+            return new CoordTransformUtil(config);
+        }
+    }
+
+    /**
+     * 回收资源
+     */
+    @Override
+    public void close() {
+        log.info("[销毁CoordTransformUtil] 开始");
+        log.info("[销毁CoordTransformUtil] 结束");
+    }
 
     private double[] delta(double lat, double lon) {
         double[] latlng = new double[2];
@@ -38,10 +64,10 @@ public class CoordTransformUtil implements Serializable, Closeable {
         double dLon = transformLon(lon - 105.0, lat - 35.0);
         double radLat = lat / 180.0 * Math.PI;
         double magic = Math.sin(radLat);
-        magic = 1 - OFFSET * magic * magic;
+        magic = 1 - config.OFFSET * magic * magic;
         double sqrtMagic = Math.sqrt(magic);
-        dLat = (dLat * 180.0) / ((AXIS * (1 - OFFSET)) / (magic * sqrtMagic) * Math.PI);
-        dLon = (dLon * 180.0) / (AXIS / sqrtMagic * Math.cos(radLat) * Math.PI);
+        dLat = (dLat * 180.0) / ((config.AXIS * (1 - config.OFFSET)) / (magic * sqrtMagic) * Math.PI);
+        dLon = (dLon * 180.0) / (config.AXIS / sqrtMagic * Math.cos(radLat) * Math.PI);
         latlng[0] = dLat;
         latlng[1] = dLon;
         return latlng;
@@ -89,8 +115,8 @@ public class CoordTransformUtil implements Serializable, Closeable {
         double x = lon;
         double y = lat;
         double[] latlon = new double[2];
-        double z = Math.sqrt(x * x + y * y) + 0.00002 * Math.sin(y * X_PI);
-        double theta = Math.atan2(y, x) + 0.000003 * Math.cos(x * X_PI);
+        double z = Math.sqrt(x * x + y * y) + 0.00002 * Math.sin(y * config.X_PI);
+        double theta = Math.atan2(y, x) + 0.000003 * Math.cos(x * config.X_PI);
         latlon[0] = z * Math.sin(theta) + 0.006;
         latlon[1] = z * Math.cos(theta) + 0.0065;
         return latlon;
@@ -131,8 +157,8 @@ public class CoordTransformUtil implements Serializable, Closeable {
         double x = lon - 0.0065;
         double y = lat - 0.006;
         double[] latlon = new double[2];
-        double z = Math.sqrt(x * x + y * y) - 0.00002 * Math.sin(y * X_PI);
-        double theta = Math.atan2(y, x) - 0.000003 * Math.cos(x * X_PI);
+        double z = Math.sqrt(x * x + y * y) - 0.00002 * Math.sin(y * config.X_PI);
+        double theta = Math.atan2(y, x) - 0.000003 * Math.cos(x * config.X_PI);
         latlon[0] = z * Math.sin(theta);
         latlon[1] = z * Math.cos(theta);
         return latlon;
@@ -386,42 +412,5 @@ public class CoordTransformUtil implements Serializable, Closeable {
         }
         return result;
     }
-
-
-    /**
-     * 私有构造，避免外部初始化
-     */
-    private CoordTransformUtil() {
-    }
-
-    /**
-     * 获得工具类工厂
-     *
-     * @return
-     */
-    public static CoordTransformUtil builder() {
-        return INSTANCE;
-    }
-
-    /**
-     * 构建工具类
-     *
-     * @return
-     */
-    public CoordTransformUtil build() {
-        log.info("构建工具类开始");
-        log.info("构建工具类完毕");
-        return INSTANCE;
-    }
-
-    /**
-     * 回收资源
-     */
-    @Override
-    public void close() {
-        log.info("销毁工具类开始");
-        log.info("销毁工具类结束");
-    }
-
 
 }

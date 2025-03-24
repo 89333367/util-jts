@@ -30,7 +30,8 @@
 <dependency>
     <groupId>sunyu.util</groupId>
     <artifactId>util-jts</artifactId>
-    <version>v1.0</version>
+    <!-- {jts-core.version}_{util.version}_{jdk.version}_{architecture.version} -->
+    <version>1.20.0_1.0_jdk8_x64</version>
 </dependency>
 ```
 

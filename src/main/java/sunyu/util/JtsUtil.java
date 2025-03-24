@@ -11,8 +11,6 @@ import org.locationtech.jts.operation.buffer.BufferOp;
 import sunyu.util.concaveHull.ConcaveHullJTS;
 import sunyu.util.concaveHull.TriCheckerAlpha;
 
-import java.io.Closeable;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -48,14 +46,42 @@ import java.util.concurrent.TimeoutException;
  * <p>
  * MULTIPOLYGON EMPTY
  */
-public class JtsUtil implements Serializable, Closeable {
+public class JtsUtil implements AutoCloseable {
     private final Log log = LogFactory.get();
-    private static final JtsUtil INSTANCE = new JtsUtil();
+    private final Config config;
 
+    public static Builder builder() {
+        return new Builder();
+    }
 
-    private final String POLYGON = "Polygon";
-    private final GeometryFactory geometryFactory = new GeometryFactory();
-    private final WKTReader wktReader = new WKTReader(geometryFactory);
+    private JtsUtil(Config config) {
+        log.info("[构建JtsUtil] 开始");
+        log.info("[构建JtsUtil] 结束");
+        this.config = config;
+    }
+
+    private static class Config {
+        private final String POLYGON = "Polygon";
+        private final GeometryFactory geometryFactory = new GeometryFactory();
+        private final WKTReader wktReader = new WKTReader(geometryFactory);
+    }
+
+    public static class Builder {
+        private final Config config = new Config();
+
+        public JtsUtil build() {
+            return new JtsUtil(config);
+        }
+    }
+
+    /**
+     * 回收资源
+     */
+    @Override
+    public void close() {
+        log.info("[销毁JtsUtil] 开始");
+        log.info("[销毁JtsUtil] 结束");
+    }
 
     /**
      * 由WGS84坐标转换高斯投影坐标
@@ -100,7 +126,7 @@ public class JtsUtil implements Serializable, Closeable {
      * @return WKT读取器
      */
     public WKTReader getWktReader() {
-        return wktReader;
+        return config.wktReader;
     }
 
     /**
@@ -291,7 +317,7 @@ public class JtsUtil implements Serializable, Closeable {
             }
             hulls.clear();
             hulls.addAll(newhulls);
-            GeometryCollection geometryCollection = geometryFactory.createGeometryCollection(hulls.toArray(new Geometry[hulls.size()]));
+            GeometryCollection geometryCollection = config.geometryFactory.createGeometryCollection(hulls.toArray(new Geometry[hulls.size()]));
             Geometry resultGeometry = geometryCollection.buffer(0);//返回集合对象
             if (resultGeometry.isEmpty()) {
                 return result;
@@ -304,7 +330,7 @@ public class JtsUtil implements Serializable, Closeable {
                 for (int j = 1; j < newhulls.size(); j++) {
                     Coordinate coordinate = newhulls.get(j).getCoordinate();
                     Coordinate[] coordinates = {coordinate, coordinatePre};
-                    LineString lineString = geometryFactory.createLineString(coordinates);
+                    LineString lineString = config.geometryFactory.createLineString(coordinates);
                     BufferOp bufferOp = new BufferOp(lineString);
                     bufferOp.setEndCapStyle(BufferOp.CAP_ROUND);
                     Geometry line = bufferOp.getResultGeometry(0.0000001);//用于连通的多边形
@@ -312,14 +338,14 @@ public class JtsUtil implements Serializable, Closeable {
                     coordinatePre = coordinate;
                 }
                 //合并管道和多边形
-                GeometryCollection collection = geometryFactory.createGeometryCollection(hulls.toArray(new Geometry[hulls.size()]));
+                GeometryCollection collection = config.geometryFactory.createGeometryCollection(hulls.toArray(new Geometry[hulls.size()]));
                 Geometry buffer = collection.buffer(0);
-                if (POLYGON.equals(buffer.getGeometryType())) {
+                if (config.POLYGON.equals(buffer.getGeometryType())) {
                     result[1] = wktToGoogleStr((Polygon) buffer);
                 }
             } else if (hulls.size() == 1) { //过滤完结果只剩一个多边形
                 for (Geometry hull : hulls) {
-                    if (POLYGON.equals(hull.getGeometryType())) {
+                    if (config.POLYGON.equals(hull.getGeometryType())) {
                         result[1] = wktToGoogleStr((Polygon) hull);
                     } else {
                         log.error("凹壳转换多边形异常");
@@ -357,7 +383,7 @@ public class JtsUtil implements Serializable, Closeable {
         Polygon result = null;
         if (CollUtil.isNotEmpty(hulls) && hulls.size() == 1) {
             for (Geometry hull : hulls) {
-                if (POLYGON.equals(hull.getGeometryType())) {
+                if (config.POLYGON.equals(hull.getGeometryType())) {
                     result = (Polygon) hull;
                 } else {
                     log.error("凹壳转换多边形异常");
@@ -511,39 +537,4 @@ public class JtsUtil implements Serializable, Closeable {
         return Math.floor(d + 0.5);
     }
 
-
-    /**
-     * 私有构造，避免外部初始化
-     */
-    private JtsUtil() {
-    }
-
-    /**
-     * 获得工具类工厂
-     *
-     * @return
-     */
-    public static JtsUtil builder() {
-        return INSTANCE;
-    }
-
-    /**
-     * 构建工具类
-     *
-     * @return
-     */
-    public JtsUtil build() {
-        log.info("构建工具类开始");
-        log.info("构建工具类完毕");
-        return INSTANCE;
-    }
-
-    /**
-     * 释放资源
-     */
-    @Override
-    public void close() {
-        log.info("销毁工具类开始");
-        log.info("销毁工具类结束");
-    }
 }
