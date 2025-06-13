@@ -13,4 +13,10 @@ public class TestCoordTransformUtil {
         CoordTransformUtil coordTransformUtil = CoordTransformUtil.builder().build();
         log.debug("{}", coordTransformUtil.outOfChina(39.178762, 118.546783));
     }
+
+    @Test
+    void t002() {
+        CoordTransformUtil coordTransformUtil = CoordTransformUtil.builder().build();
+        log.debug("{}", coordTransformUtil.wgs2BD09(25.299342, 110.325536));
+    }
 }
