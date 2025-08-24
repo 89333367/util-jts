@@ -32,6 +32,7 @@
     <artifactId>util-jts</artifactId>
     <!-- {jts-core.version}_{util.version}_{jdk.version}_{architecture.version} -->
     <version>1.20.0_1.0_jdk8_x64</version>
+    <classifier>shaded</classifier>
 </dependency>
 ```
 
